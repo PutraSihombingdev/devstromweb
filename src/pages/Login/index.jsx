@@ -1,5 +1,5 @@
 import { Layout, Button, Row, Col, Typography, Form, Input } from "antd";
-import SignBG from "../../assets/images/curve-1.svg";
+import SignBG from "../../assets/images/game.png";
 import "./login.css";
 import { useState } from "react";
 
@@ -20,30 +20,18 @@ const LoginPage = () => {
 
   return (
     <Layout className="layout-default layout-signin">
-      <Header>
-        <div className="header-col header-brand">
-          <h5>WebfmSI.com</h5>
-        </div>
-        <div className="header-col header-nav">test</div>
-        <div className="header-col header-btn">
-          <Button type="primary">Public Sites</Button>
-        </div>
-      </Header>
+          <Header>
+      <div className="header-col header-brand">
+        <img src={SignBG} alt="Logo" style={{ height: "30px", marginRight: "10px" }} />
+      </div>
+    </Header>
+
       <Content className="signin login-container">
-        <Row gutter={[24, 0]} justify="space-around">
-          <Col
-            className="sign-img"
-            xs={{ span: 24 }}
-            lg={{ span: 8, offset: 4 }}
-            md={{ span: 12 }}
-          >
-            <img src={SignBG} alt="" />
-            {/* <img src="/login.gif" alt="img-login" /> */}
-          </Col>
+        <Row gutter={[25, 0]} justify="space-around">
           <Col xs={{ span: 24 }} lg={{ span: 8 }} md={{ span: 12 }}>
             <Title className="mb-15">Sign In</Title>
             <Title className="font-regular text-muted" level={5}>
-              Enter your email and password to sign in
+              Masukkan email and password anda untuk login
             </Title>
             <Form
               onFinish={() => handleLogin()}

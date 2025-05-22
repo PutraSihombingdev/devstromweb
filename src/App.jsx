@@ -10,6 +10,7 @@ import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "./components/layout/PrivateRoute";
 
 import Blank from "./pages/Blank";
+import Store from "./pages/Store";
 
 function App() {
   return (
@@ -69,8 +70,8 @@ function App() {
         />
         <Route
           exact
-          path="/gallery"
-          element={<PrivateRoute component={<Blank />} />}
+          path="/store"
+          element={<PrivateRoute component={<Store />} />}
         />
       </Routes>
     </div>
