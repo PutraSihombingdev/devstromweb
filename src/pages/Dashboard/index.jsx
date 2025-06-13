@@ -2,7 +2,7 @@ import React from "react";
 import { Carousel, Typography, Button, Row, Col, Card } from "antd";
 import {
   FireOutlined, ThunderboltOutlined, TeamOutlined,
-  StarFilled, ArrowRightOutlined
+  StarFilled, ArrowRightOutlined ,YuqueOutlined
 } from "@ant-design/icons";
 
 import BackgroundImage1 from "../../assets/images/jual.png";
@@ -61,10 +61,10 @@ function Dashboard() {
       {/* Game Categories */}
       <div style={{ padding: "60px 50px", backgroundColor: "#fff" }}>
         <Title level={2} style={{ textAlign: "center", marginBottom: 10 }}>
-          Popular Game Categories
+          Menyediakan Penjualan Akun Game
         </Title>
         <Paragraph type="secondary" style={{ textAlign: "center", marginBottom: 40 }}>
-          Find your favorite game genres
+          Pilih Game Favorit Mu
         </Paragraph>
         <Row gutter={[24, 24]} justify="center">
           <Col xs={24} sm={12} md={8} lg={6}>
@@ -76,8 +76,8 @@ function Dashboard() {
               </div>}
             >
               <Card.Meta
-                title={<Title level={4}>Action</Title>}
-                description="Fast-paced, adrenaline-pumping games!"
+                title={<Title level={4}>Free Fire</Title>}
+                description="Free Fire adalah shooting game mobile paling terkenal di dunia"
               />
             </Card>
           </Col>
@@ -86,12 +86,12 @@ function Dashboard() {
               hoverable
               style={{ borderRadius: 12, textAlign: "center", height: "100%" }}
               cover={<div style={{ padding: "30px 0 20px", backgroundColor: "#fff7e6" }}>
-                <ThunderboltOutlined style={{ fontSize: 48, color: "#fa8c16" }} />
+                <YuqueOutlined style={{ fontSize: 48, color: "#fa8c16" }} />
               </div>}
             >
               <Card.Meta
-                title={<Title level={4}>Shooter</Title>}
-                description="Best FPS and TPS games available"
+                title={<Title level={4}>Mobile Legend</Title>}
+                description="Permainan video seluler bergenre multiplayer online battle arena (MOBA)"
               />
             </Card>
           </Col>
@@ -104,11 +104,26 @@ function Dashboard() {
               </div>}
             >
               <Card.Meta
-                title={<Title level={4}>Multiplayer</Title>}
-                description="Connect and play with friends online"
+                title={<Title level={4}>PUBG</Title>}
+                description="PUBG MOBILE adalah game battle royale orisinal di perangkat seluler dan salah satu game menembak seluler terbaik"
               />
             </Card>
           </Col>
+          <Col xs={24} sm={12} md={8} lg={6}>
+            <Card
+              hoverable
+              style={{ borderRadius: 12, textAlign: "center", height: "100%" }}
+              cover={<div style={{ padding: "30px 0 20px", backgroundColor: "#fff7e6" }}>
+                <ThunderboltOutlined style={{ fontSize: 48, color: "#fa8c16" }} />
+              </div>}
+            >
+              <Card.Meta
+                title={<Title level={4}>Valorant</Title>}
+                description="Penembak taktis berbasis tim dan penembak orang pertama yang diatur dalam dekat masa depan"
+              />
+            </Card>
+          </Col>
+          
         </Row>
       </div>
     </div>

@@ -4,6 +4,7 @@ import { Layout, Affix } from "antd";
 import Header from "./Header";
 import Footer from "./Footer";
 
+
 const { Header: AntHeader, Content } = Layout;
 
 function MainLayout({ children }) {

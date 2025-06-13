@@ -1,49 +1,62 @@
 import {
   Col, Row, Typography, Card, List, FloatButton, Drawer, Form, Input, Button,
-  notification, Popconfirm, 
+  notification, Popconfirm, Modal,
 } from "antd";
 import { useEffect, useState } from "react";
-import { PlusCircleOutlined, EditOutlined, SearchOutlined, DeleteOutlined } from '@ant-design/icons';
-import { deleteData, getData, sendData } from "../../utils/api";
+import { PlusCircleOutlined, EditOutlined, SearchOutlined, DeleteOutlined, PicLeftOutlined } from '@ant-design/icons';
+import axios from "axios";
+import SearchWithFilter from "../../components/SearchWithFilter";
 
 const { Title, Text } = Typography;
 
 const Store = () => {
   const [api, contextHolder] = notification.useNotification();
   const [dataSources, setDataSources] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [idSelected, setIdSelected] = useState(null);
   const [searchText, setSearchText] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState("");
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
   const [formInputNature] = Form.useForm();
+
+  // State untuk Modal Detail
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedDetail, setSelectedDetail] = useState(null);
 
   const openNotificationWithIcon = (type, title, msg) => {
     api[type]({ message: title, description: msg });
   };
 
-  useEffect(() => { getDataStore(); }, []);
+  useEffect(() => {
+    getDataStore();
+  }, []);
 
   const getDataStore = async () => {
     setIsLoading(true);
     try {
-      const resp = await getData("/api/v1/natures");
-      if (resp) setDataSources(resp);
+      const resp = await axios.get("https://webfmsi.singapoly.com/api/playlist/47");
+      if (resp.data?.data) {
+        setDataSources(resp.data.data);
+        setFilteredData(resp.data.data);
+      }
     } catch (err) {
       console.error(err);
+      openNotificationWithIcon('error', 'Error', 'Gagal mengambil data dari API');
     } finally {
       setIsLoading(false);
     }
   };
 
- const onHandleDrawer = () => {
-  setIsEdit(false);
-  formInputNature.setFieldsValue({
-    name_natures: "",
-    description: "ID     :\nNick   :\nSkin   :\nRank   :\nHarga  :\nDetail  : "
-  });
-  setIsOpenDrawer(true);
-};
+  const onHandleDrawer = () => {
+    setIsEdit(false);
+    formInputNature.setFieldsValue({
+      title: "",
+      description: "",
+    });
+    setIsOpenDrawer(true);
+  };
 
   const onCloseDrawer = () => {
     setIsEdit(false);
@@ -52,53 +65,34 @@ const Store = () => {
     setIsOpenDrawer(false);
   };
 
-  const confirmDelete = (record) => {
-    const url = `/api/v1/natures/${record.id}`;
-    deleteData(url)
-      .then((resp) => {
-        if (resp?.status === 200) {
-          getDataStore();
-          openNotificationWithIcon('success', "Hapus Data", "Berhasil Menghapus Data");
-        } else {
-          openNotificationWithIcon("error", "Hapus Data", "Gagal Menghapus Data");
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-        openNotificationWithIcon("error", "Hapus Data", "Terjadi kesalahan saat menghapus data");
-      });
+  const handleSearch = (text, filter = selectedFilter) => {
+    setSearchText(text.toLowerCase());
+    setSelectedFilter(filter);
+
+    const filtered = dataSources.filter((item) => {
+      const matchesSearch = item.title.toLowerCase().includes(text.toLowerCase());
+      const matchesFilter = filter ? item.title.toLowerCase().includes(filter.toLowerCase()) : true;
+      return matchesSearch && matchesFilter;
+    });
+
+    setFilteredData(filtered);
   };
-
-  const handleSearch = (search) => setSearchText(search.toLowerCase());
-
-  const dataSourceFiltered = dataSources.filter((item) =>
-    item?.name_natures.toLowerCase().includes(searchText)
-  );
 
   const handleSubmit = async () => {
     try {
       const values = await formInputNature.validateFields();
-      const url = isEdit ? `/api/v1/natures/${idSelected}` : "/api/v1/natures";
+      const url = "https://webfmsi.singapoly.com/api/playlist/47";
 
-      const formData = new FormData();
-      formData.append("name_natures", values.name_natures);
-      formData.append("description", values.description);
+      // Simulasi pengiriman POST karena API ini tidak mendukung penambahan data (read-only)
+      console.log("Data yang akan dikirim:", values);
 
-      const resp = await sendData(url, formData);
-      if (resp) {
-        openNotificationWithIcon(
-          "success",
-          "Data Store",
-          isEdit ? "Sukses memperbaharui data" : "Sukses menambahkan data"
-        );
-        formInputNature.resetFields();
-        getDataStore();
-        onCloseDrawer();
-      } else {
-        openNotificationWithIcon("error", "Data Gallery", "Data gagal dikirim");
-      }
+      openNotificationWithIcon("success", "Data Store", "Data berhasil disimpan (simulasi)");
+      formInputNature.resetFields();
+      onCloseDrawer();
+      getDataStore();
     } catch (err) {
       console.error(err);
+      openNotificationWithIcon("error", "Error", "Terjadi kesalahan saat mengirim data");
     }
   };
 
@@ -107,9 +101,25 @@ const Store = () => {
     setIsOpenDrawer(true);
     setIdSelected(record?.id);
     formInputNature.setFieldsValue({
-      name_natures: record?.name_natures,
-      description: record?.description,
+      title: record?.title,
+      description: record?.description || "",
     });
+  };
+
+  const showDetail = (item) => {
+    setSelectedDetail(item);
+    setIsModalVisible(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalVisible(false);
+    setSelectedDetail(null);
+  };
+
+  const confirmDelete = (record) => {
+    // Karena API read-only, saya buatkan simulasi penghapusan
+    openNotificationWithIcon('success', 'Hapus Data', `Data ${record.title} dihapus (simulasi)`);
+    setFilteredData(filteredData.filter(item => item.id !== record.id));
   };
 
   return (
@@ -140,7 +150,7 @@ const Store = () => {
               <Form form={formInputNature} layout="vertical">
                 <Form.Item
                   label="Nama Akun"
-                  name="name_natures"
+                  name="title"
                   rules={[{ required: true, message: "Nama akun tidak boleh kosong" }]}
                 >
                   <Input placeholder="Contoh: Akun Mobile Legends, Akun Valorant" />
@@ -159,39 +169,32 @@ const Store = () => {
             <Title level={3}>Akun Penjualan</Title>
             <Text style={{ fontSize: "14px" }}>Kelola dan jual akun game favoritmu di sini!</Text>
 
-            <Input
-              prefix={<SearchOutlined />}
-              placeholder="Cari akun game yang kamu cari"
-              className="header-search my-4"
-              allowClear
-              size="large"
-              onChange={(e) => handleSearch(e.target.value)}
-            />
+            <SearchWithFilter onSearch={handleSearch} style={{ marginBottom: "24px" }} />
 
             {isLoading ? (
               <div>Loading data akun...</div>
             ) : (
               <List
                 grid={{ gutter: 24, xs: 1, sm: 1, md: 2, lg: 2, xl: 2 }}
-                dataSource={dataSourceFiltered}
+                dataSource={filteredData}
                 renderItem={(item) => (
                   <List.Item key={item?.id}>
                     <Card
                       hoverable
                       cover={
                         <img
-                          src={item?.url_photo || "/ml.png"}
+                          src={item.thumbnail || "https://i.pinimg.com/736x/9a/d6/67/9ad667f9dcaad4bff1b6f3e73737dddd.jpg"}
                           alt="gambar akun"
                           style={{ height: 200, objectFit: "cover", borderRadius: '8px 8px 0 0' }}
                         />
                       }
                       actions={[
                         <EditOutlined key="edit" onClick={() => handleDrawerEdit(item)} />,
-                        <SearchOutlined key="view" />,
+                        <PicLeftOutlined key="view" onClick={() => showDetail(item)} />,
                         <Popconfirm
                           key="delete"
                           title="Hapus Data"
-                          description={`Apakah kamu yakin ingin menghapus data ${item?.name_natures}?`}
+                          description={`Apakah kamu yakin ingin menghapus data ${item?.title}?`}
                           onConfirm={() => confirmDelete(item)}
                           okText="Ya"
                           cancelText="Tidak"
@@ -201,10 +204,8 @@ const Store = () => {
                       ]}
                     >
                       <Card.Meta
-                        title={<Text strong>{item?.name_natures}</Text>}
-                        description={
-                          <Text>{item?.description}</Text>
-                        }
+                        title={<Text strong>{item?.title}</Text>}
+                        description={<Text>{item?.description}</Text>}
                       />
                     </Card>
                   </List.Item>
@@ -214,6 +215,35 @@ const Store = () => {
           </Card>
         </Col>
       </Row>
+      <Modal
+        title="Detail Akun"
+        open={isModalVisible}
+        onCancel={handleModalClose}
+        footer={[]}
+      >
+        {selectedDetail && (
+          <div>
+            <p><strong>Nama:</strong> {selectedDetail.title}</p>
+            <p><strong>Deskripsi:</strong></p>
+
+            <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word", marginBottom: "16px" }}>
+              {selectedDetail.description}
+            </pre>
+
+            <Button
+              type="primary"
+              danger
+              block
+              onClick={() => {
+                openNotificationWithIcon('success', 'Berhasil', `${selectedDetail.title} sudah terjual (simulasi)`);
+                handleModalClose();
+              }}
+            >
+              Tandai sebagai Terjual
+            </Button>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };

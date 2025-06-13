@@ -268,6 +268,25 @@
         transform: rotate(-2deg);
     }
 }
+.layout-default {
+  background: linear-gradient(135deg, #ece9e6, #ffffff);
+}
+
+.login-container {
+  background: url('../../assets/images/game.png') no-repeat center center;
+  background-size: cover;
+}
+
+.ant-card {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.copyright {
+  font-size: 14px;
+  color: #888;
+}
+
 
 @keyframes hamsterFRLimb {
     from,

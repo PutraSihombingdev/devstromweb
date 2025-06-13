@@ -1,13 +1,14 @@
 import { Col, Row, Typography, Card, List } from "antd";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import SearchWithFilter from "../../components/SearchWithFilter";
 
 import { getData } from "../../utils/api";
 
 const { Title, Text } = Typography;
 
-const Gallery = () => {
+const Kategori = () => {
   const [dataSources, setDataSources] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -21,6 +22,7 @@ const Gallery = () => {
       setIsLoading(false);
       if (resp) {
         setDataSources(resp);
+        setFilteredData(resp); 
       } else {
         console.log("Something went wrong");
       }
@@ -30,6 +32,20 @@ const Gallery = () => {
     }
   };
 
+  const handleSearch = (searchText) => {
+    const filtered = dataSources.filter((item) =>
+      item.name_natures.toLowerCase().includes(searchText.toLowerCase())
+    );
+    setFilteredData(filtered);
+  };
+
+  const handleFilterSelect = (filter) => {
+    const filtered = dataSources.filter((item) =>
+      item.name_natures.toLowerCase().includes(filter.toLowerCase())
+    );
+    setFilteredData(filtered);
+  };
+
   return (
     <div className="layout-content">
       <Row gutter={[24, 0]}>
@@ -37,6 +53,9 @@ const Gallery = () => {
           <Card bordered={false} className="circlebox h-full w-full">
             <Title>List of Nature</Title>
             <Text style={{ fontSize: "12pt" }}>Tambahkan Konten Disini...</Text>
+
+            <SearchWithFilter onSearch={handleSearch} onFilterSelect={handleFilterSelect} />
+
             {isLoading ? (
               <div>Sedang menunggu data...</div>
             ) : (
@@ -49,7 +68,7 @@ const Gallery = () => {
                   lg: 3,
                   xl: 3,
                 }}
-                dataSource={dataSources}
+                dataSource={filteredData}
                 renderItem={(item) => (
                   <List.Item key={item?.id}>
                     <Card
@@ -76,4 +95,4 @@ const Gallery = () => {
   );
 };
 
-export default Gallery;
+export default Kategori;

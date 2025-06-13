@@ -1,31 +1,34 @@
-import React, { useState } from "react";
-import { Menu, Layout, Row, Col, Button, Space, Typography } from "antd";
-import { NavLink, useNavigate } from "react-router-dom";
+import React from "react";
+import { Menu, Layout, Row, Col, Button, Typography } from "antd";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import {
   HomeOutlined,
-  AppstoreOutlined,
   UserOutlined,
   SettingOutlined,
   LogoutOutlined,
+  ShopOutlined,
+  ShoppingCartOutlined
 } from "@ant-design/icons";
+import { MusicalNoteIcon } from "@heroicons/react/20/solid";
 
 const { Header } = Layout;
 const { Text } = Typography;
 
 function HeaderNav() {
-  const [selectedKey, setSelectedKey] = useState("dashboard");
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Mengambil URL path untuk menyesuaikan selectedKey
+  const selectedKey = location.pathname.split("/")[1] || "dashboard";
 
   const menuItems = [
     { key: "dashboard", icon: <HomeOutlined />, label: <NavLink to="/dashboard">Dashboard</NavLink> },
-    { key: "store", icon: <AppstoreOutlined />, label: <NavLink to="/store">Store</NavLink> },
+    { key: "store", icon: <ShopOutlined />, label: <NavLink to="/store">Store</NavLink> },
+    { key: "orders", icon: <ShoppingCartOutlined />, label: <NavLink to="/orders">Orders</NavLink> },
+    { key: "playlist", icon: <MusicalNoteIcon />, label: <NavLink to="/playlist">Playlist</NavLink> },
     { key: "profile", icon: <UserOutlined />, label: <NavLink to="/profile">Profile</NavLink> },
     { key: "settings", icon: <SettingOutlined />, label: <NavLink to="/settings">Settings</NavLink> },
   ];
-
-  const handleMenuClick = ({ key }) => {
-    setSelectedKey(key);
-  };
 
   const doLogout = () => {
     navigate("/login", { replace: true });
@@ -67,7 +70,6 @@ function HeaderNav() {
               mode="horizontal"
               selectedKeys={[selectedKey]}
               items={menuItems}
-              onClick={handleMenuClick}
               style={{
                 borderBottom: "none",
                 display: "flex",
