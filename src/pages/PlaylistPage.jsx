@@ -187,7 +187,7 @@ function PlaylistPage() {
                 style={{ width: 250 }}
               />
               <Button type="primary" onClick={() => setSearchKeyword(searchInput)}>
-                Cari Playlist mu
+                Cari Playlist mu disini
               </Button>
               <Button onClick={toggleSelectMode}>
                 {isSelectMode ? "Batal Pilih" : "Pilih Playlist"}
