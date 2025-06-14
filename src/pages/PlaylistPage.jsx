@@ -176,7 +176,7 @@ function PlaylistPage() {
             </Drawer>
 
             <Title level={3}>Playlist</Title>
-            <Text style={{ fontSize: "14px" }}>Kelola playlist terbaik mu disni!</Text>
+            <Text style={{ fontSize: "14px" }}>Kelola playlist terbaik mu disini!</Text>
 
             <Space style={{ marginBottom: 16, marginTop: 12 }}>
               <Input
