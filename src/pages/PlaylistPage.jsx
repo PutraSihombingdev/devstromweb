@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import {
   Col, Row, Typography, Card, List, FloatButton, Drawer, Form, Input, Button,
-  notification, Popconfirm, Modal
+  notification, Popconfirm, Modal, Checkbox, Space
 } from 'antd';
-import { PlusCircleOutlined, EditOutlined, PicLeftOutlined, DeleteOutlined } from '@ant-design/icons';
+import {
+  PlusCircleOutlined, EditOutlined, PicLeftOutlined, DeleteOutlined
+} from '@ant-design/icons';
 import { getPlaylist, addPlaylist, updatePlaylist, deletePlaylist } from '../api/playlistApi';
 
 const { Title, Text } = Typography;
@@ -16,10 +18,15 @@ function PlaylistPage() {
   const [selectedId, setSelectedId] = useState(null);
   const [form] = Form.useForm();
 
-  // Drawer dan Modal
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedDetail, setSelectedDetail] = useState(null);
+
+  const [isSelectMode, setIsSelectMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState([]);
+
+  const [searchInput, setSearchInput] = useState("");
+  const [searchKeyword, setSearchKeyword] = useState("");
 
   const openNotification = (type, title, msg) => {
     api[type]({ message: title, description: msg });
@@ -33,7 +40,7 @@ function PlaylistPage() {
     setIsLoading(true);
     try {
       const response = await getPlaylist();
-      setPlaylists(response.datas);
+      setPlaylists(response?.datas || []);
     } catch (err) {
       console.error(err);
       openNotification('error', 'Load Playlist', 'Gagal memuat data');
@@ -58,7 +65,6 @@ function PlaylistPage() {
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-
       if (isEdit) {
         await updatePlaylist(selectedId, values);
         openNotification('success', 'Update Playlist', 'Berhasil mengupdate data');
@@ -66,7 +72,6 @@ function PlaylistPage() {
         await addPlaylist(values);
         openNotification('success', 'Tambah Playlist', 'Berhasil menambahkan data');
       }
-
       loadPlaylist();
       onCloseDrawer();
     } catch (err) {
@@ -99,6 +104,19 @@ function PlaylistPage() {
     }
   };
 
+  const confirmBulkDelete = async () => {
+    try {
+      await Promise.all(selectedIds.map(id => deletePlaylist(id)));
+      openNotification('success', 'Hapus Playlist', 'Berhasil menghapus data terpilih');
+      setSelectedIds([]);
+      loadPlaylist();
+      setIsSelectMode(false);
+    } catch (err) {
+      console.error(err);
+      openNotification('error', 'Hapus Playlist', 'Gagal menghapus data');
+    }
+  };
+
   const showDetail = (item) => {
     setSelectedDetail(item);
     setIsModalVisible(true);
@@ -107,6 +125,17 @@ function PlaylistPage() {
   const handleModalClose = () => {
     setIsModalVisible(false);
     setSelectedDetail(null);
+  };
+
+  const toggleSelectMode = () => {
+    setIsSelectMode(!isSelectMode);
+    setSelectedIds([]);
+  };
+
+  const handleSelectChange = (id) => {
+    setSelectedIds(prev =>
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
   };
 
   return (
@@ -128,19 +157,19 @@ function PlaylistPage() {
               }
             >
               <Form form={form} layout="vertical">
-                <Form.Item label="Name" name="play_name" rules={[{ required: true }]}>
+                <Form.Item label="Nama Playlist" name="play_name" rules={[{ required: true, message: 'Wajib diisi' }]}>
                   <Input />
                 </Form.Item>
-                <Form.Item label="URL" name="play_url" rules={[{ required: true }]}>
+                <Form.Item label="URL" name="play_url" rules={[{ required: true, message: 'Wajib diisi' }]}>
                   <Input />
                 </Form.Item>
-                <Form.Item label="Thumbnail" name="play_thumbnail" rules={[{ required: true }]}>
+                <Form.Item label="Thumbnail" name="play_thumbnail" rules={[{ required: true, message: 'Wajib diisi' }]}>
                   <Input />
                 </Form.Item>
-                <Form.Item label="Genre" name="play_genre" rules={[{ required: true }]}>
+                <Form.Item label="Genre" name="play_genre" rules={[{ required: true, message: 'Wajib diisi' }]}>
                   <Input placeholder="music, song, movie, education, others" />
                 </Form.Item>
-                <Form.Item label="Description" name="play_description" rules={[{ required: true }]}>
+                <Form.Item label="Deskripsi" name="play_description" rules={[{ required: true, message: 'Wajib diisi' }]}>
                   <Input.TextArea />
                 </Form.Item>
               </Form>
@@ -149,41 +178,78 @@ function PlaylistPage() {
             <Title level={3}>Playlist</Title>
             <Text style={{ fontSize: "14px" }}>Kelola playlist favoritmu di sini!</Text>
 
+            <Space style={{ marginBottom: 16, marginTop: 12 }}>
+              <Input
+                placeholder="Cari playlist..."
+                allowClear
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                style={{ width: 250 }}
+              />
+              <Button type="primary" onClick={() => setSearchKeyword(searchInput)}>
+                Cari
+              </Button>
+              <Button onClick={toggleSelectMode}>
+                {isSelectMode ? "Batal Pilih" : "Pilih Playlist"}
+              </Button>
+              {isSelectMode && selectedIds.length > 0 && (
+                <Popconfirm
+                  title="Hapus Playlist"
+                  description={`Yakin ingin menghapus ${selectedIds.length} playlist?`}
+                  onConfirm={confirmBulkDelete}
+                  okText="Ya"
+                  cancelText="Tidak"
+                >
+                  <Button danger>Hapus {selectedIds.length} Terpilih</Button>
+                </Popconfirm>
+              )}
+            </Space>
+
             {isLoading ? (
               <div>Loading data playlist...</div>
             ) : (
               <List
                 grid={{ gutter: 24, xs: 1, sm: 1, md: 2, lg: 2, xl: 2 }}
-                dataSource={playlists}
+                dataSource={playlists.filter(item =>
+                  item.play_name.toLowerCase().includes(searchKeyword.toLowerCase())
+                )}
                 renderItem={(item) => (
-                  <List.Item key={item?.id_play}>
+                  <List.Item key={item.id_play}>
                     <Card
                       hoverable
                       cover={
                         <img
-                          src={item?.play_thumbnail}
-                          alt="Thumbnail Playlist"
+                          src={item.play_thumbnail}
+                          alt="Thumbnail"
                           style={{ height: 200, objectFit: "cover", borderRadius: '8px 8px 0 0' }}
                         />
                       }
-                      actions={[
+                      actions={!isSelectMode ? [
                         <EditOutlined key="edit" onClick={() => handleDrawerEdit(item)} />,
                         <PicLeftOutlined key="view" onClick={() => showDetail(item)} />,
                         <Popconfirm
                           key="delete"
-                          title="Hapus Data"
-                          description={`Yakin ingin menghapus ${item?.play_name}?`}
+                          title="Hapus Playlist"
+                          description={`Yakin ingin menghapus ${item.play_name}?`}
                           onConfirm={() => confirmDelete(item)}
                           okText="Ya"
                           cancelText="Tidak"
                         >
                           <DeleteOutlined />
-                        </Popconfirm>,
-                      ]}
+                        </Popconfirm>
+                      ] : []}
                     >
+                      {isSelectMode && (
+                        <Checkbox
+                          checked={selectedIds.includes(item.id_play)}
+                          onChange={() => handleSelectChange(item.id_play)}
+                        >
+                          Pilih
+                        </Checkbox>
+                      )}
                       <Card.Meta
-                        title={<Text strong>{item?.play_name}</Text>}
-                        description={<Text>{item?.play_description}</Text>}
+                        title={<Text strong>{item.play_name}</Text>}
+                        description={<Text>{item.play_description}</Text>}
                       />
                     </Card>
                   </List.Item>
@@ -210,12 +276,15 @@ function PlaylistPage() {
             <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word", marginBottom: "16px" }}>
               {selectedDetail.play_description}
             </pre>
-            <img src={selectedDetail.play_thumbnail} alt="Thumbnail" style={{ width: '100%', borderRadius: '8px' }} />
+            <img
+              src={selectedDetail.play_thumbnail}
+              alt="Thumbnail"
+              style={{ width: '100%', borderRadius: '8px' }}
+            />
           </div>
         )}
       </Modal>
 
-      {/* FloatButton dipindah ke sini agar fixed di layar */}
       <FloatButton
         shape="circle"
         type="primary"
