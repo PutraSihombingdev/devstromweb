@@ -176,7 +176,7 @@ function PlaylistPage() {
             </Drawer>
 
             <Title level={3}>Playlist</Title>
-            <Text style={{ fontSize: "14px" }}>Kelola playlist favoritmu di sini!</Text>
+            <Text style={{ fontSize: "14px" }}>Kelola playlist terbaik mu disni!</Text>
 
             <Space style={{ marginBottom: 16, marginTop: 12 }}>
               <Input
@@ -295,6 +295,6 @@ function PlaylistPage() {
       />
     </div>
   );
-}
+}//tes
 
 export default PlaylistPage;
