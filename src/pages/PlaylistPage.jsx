@@ -33,7 +33,7 @@ function PlaylistPage() {
     setIsLoading(true);
     try {
       const response = await getPlaylist();
-      setPlaylists(response.datas); // ✅ Sudah diperbaiki
+      setPlaylists(response.datas);
     } catch (err) {
       console.error(err);
       openNotification('error', 'Load Playlist', 'Gagal memuat data');
@@ -115,13 +115,6 @@ function PlaylistPage() {
       <Row gutter={[24, 0]}>
         <Col xs={24}>
           <Card bordered={false} className="circlebox h-full w-full">
-            <FloatButton
-              shape="circle"
-              type="primary"
-              icon={<PlusCircleOutlined />}
-              onClick={onHandleDrawer}
-              style={{ right: 24, bottom: 24 }}
-            />
 
             <Drawer
               title={isEdit ? "Edit Playlist" : "Tambah Playlist"}
@@ -197,6 +190,7 @@ function PlaylistPage() {
                 )}
               />
             )}
+
           </Card>
         </Col>
       </Row>
@@ -220,6 +214,16 @@ function PlaylistPage() {
           </div>
         )}
       </Modal>
+
+      {/* FloatButton dipindah ke sini agar fixed di layar */}
+      <FloatButton
+        shape="circle"
+        type="primary"
+        icon={<PlusCircleOutlined />}
+        onClick={onHandleDrawer}
+        style={{ right: 24, bottom: 24 }}
+        tooltip="Tambah Playlist"
+      />
     </div>
   );
 }
