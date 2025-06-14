@@ -145,14 +145,6 @@ function PlaylistPage() {
         <Col xs={24}>
           <Card bordered={false} className="circlebox h-full w-full">
 
-            <FloatButton
-              shape="circle"
-              type="primary"
-              icon={<PlusCircleOutlined />}
-              onClick={onHandleDrawer}
-              style={{ right: 24, bottom: 24 }}
-            />
-
             <Drawer
               title={isEdit ? "Edit Playlist" : "Tambah Playlist"}
               onClose={onCloseDrawer}
@@ -264,6 +256,7 @@ function PlaylistPage() {
                 )}
               />
             )}
+
           </Card>
         </Col>
       </Row>
@@ -291,6 +284,15 @@ function PlaylistPage() {
           </div>
         )}
       </Modal>
+
+      <FloatButton
+        shape="circle"
+        type="primary"
+        icon={<PlusCircleOutlined />}
+        onClick={onHandleDrawer}
+        style={{ right: 24, bottom: 24 }}
+        tooltip="Tambah Playlist"
+      />
     </div>
   );
 }
