@@ -176,7 +176,7 @@ function PlaylistPage() {
             </Drawer>
 
             <Title level={3}>Playlist</Title>
-            <Text style={{ fontSize: "14px" }}>Kelola playlist favoritmu di sini!</Text>
+            <Text style={{ fontSize: "14px" }}>Kelola playlist terbaik mu disni!</Text>
 
             <Space style={{ marginBottom: 16, marginTop: 12 }}>
               <Input
@@ -187,7 +187,7 @@ function PlaylistPage() {
                 style={{ width: 250 }}
               />
               <Button type="primary" onClick={() => setSearchKeyword(searchInput)}>
-                Cari
+                Cari Playlist mu
               </Button>
               <Button onClick={toggleSelectMode}>
                 {isSelectMode ? "Batal Pilih" : "Pilih Playlist"}
@@ -295,6 +295,6 @@ function PlaylistPage() {
       />
     </div>
   );
-}
+}//tes
 
 export default PlaylistPage;
