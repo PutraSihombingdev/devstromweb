@@ -1,80 +1,142 @@
 import { BrowserRouter as Router, Routes, Route, Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { Layout, Menu, Button } from 'antd';
+import { Layout, Menu, Button, theme, Avatar, Space, Typography } from 'antd';
 import { useState } from 'react';
-import PlaylistPage from './pages/PlaylistPage';
+import {
+  DashboardOutlined,
+  ShoppingOutlined,
+  PlaySquareOutlined,
+  LogoutOutlined,
+  UserOutlined
+} from '@ant-design/icons';
+import PlaylistPage from './pages/Playlist/PlaylistPage';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Store from './pages/Store';
-import SignBG from './assets/images/game.png'; // Pastikan path logo benar
+import Logo from './assets/images/game.png'; // Make sure the path is correct
 
 const { Header, Content } = Layout;
+const { Text } = Typography;
 
 function AppContent({ isAuthenticated, setIsAuthenticated }) {
-    const location = useLocation();
-    const navigate = useNavigate();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const {
+    token: { colorBgContainer, colorPrimary },
+  } = theme.useToken();
 
-    const hideMenu = location.pathname === '/';
+  const hideMenu = location.pathname === '/';
 
-    const handleLogout = () => {
-        setIsAuthenticated(false);
-        navigate('/', { replace: true });
-    };
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    navigate('/', { replace: true });
+  };
 
-    const menuItems = [
-        { key: '1', label: <Link to="/dashboard" style={{ color: 'white', fontSize: '16px' }}>Dashboard</Link> },
-        { key: '2', label: <Link to="/store" style={{ color: 'white', fontSize: '16px' }}>Store</Link> },
-        { key: '3', label: <Link to="/playlist" style={{ color: 'white', fontSize: '16px' }}>Playlist</Link> },
-    ];
+  const menuItems = [
+    {
+      key: 'dashboard',
+      icon: <DashboardOutlined style={{ fontSize: '18px' }} />,
+      label: <Link to="/dashboard">Dashboard</Link>,
+    },
+    {
+      key: 'store',
+      icon: <ShoppingOutlined style={{ fontSize: '18px' }} />,
+      label: <Link to="/store">Store</Link>,
+    },
+    {
+      key: 'playlist',
+      icon: <PlaySquareOutlined style={{ fontSize: '18px' }} />,
+      label: <Link to="/playlist">Playlist</Link>,
+    },
+  ];
 
-    return (
-        <Layout>
-            {!hideMenu && (
-                <Header style={{
-                    background: 'linear-gradient(90deg, #001529 0%, #0047AB 100%)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '0 40px',
-                    height: '80px', // Membuat header lebih tinggi
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)' // Membuat header lebih terlihat
-                }}>
-                   
+  return (
+    <Layout style={{ minHeight: '100vh' }}>
+      {!hideMenu && (
+        <Header style={{
+          background: colorPrimary,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 24px',
+          height: '64px',
+          position: 'sticky',
+          top: 0,
+          zIndex: 1,
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
+        }}>
+          <Space size="large">
+            <Link to="/dashboard" style={{ display: 'flex', alignItems: 'center' }}>
+            </Link>
 
-                    {/* Menu */}
-                    <Menu
-                        theme="dark"
-                        mode="horizontal"
-                        items={menuItems}
-                        style={{ flex: 1, justifyContent: 'center', background: 'transparent', borderBottom: 'none' }}
-                    />
+            <Menu
+              theme="dark"
+              mode="horizontal"
+              items={menuItems}
+              selectedKeys={[location.pathname.split('/')[1] || 'dashboard']}
+              style={{ 
+                flex: 1, 
+                minWidth: 0,
+                background: 'transparent',
+                borderBottom: 'none',
+                fontSize: '16px'
+              }}
+            />
+          </Space>
 
-                    {/* Logout Button */}
-                    <Button type="primary" danger onClick={handleLogout} style={{ fontSize: '16px' }}>
-                        Logout
-                    </Button>
-                </Header>
-            )}
-            <Content style={{ padding: '20px' }}>
-                <Routes>
-                    <Route path="/" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
-                    <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Navigate to="/" replace />} />
-                    <Route path="/store" element={isAuthenticated ? <Store /> : <Navigate to="/" replace />} />
-                    <Route path="/playlist" element={isAuthenticated ? <PlaylistPage /> : <Navigate to="/" replace />} />
-                    <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
-            </Content>
-        </Layout>
-    );
+          <Space>
+            <Button 
+              type="text" 
+              danger 
+              onClick={handleLogout} 
+              icon={<LogoutOutlined />}
+              style={{ color: 'white' }}
+            >
+              Logout
+            </Button>
+          </Space>
+        </Header>
+      )}
+      
+      <Content style={{
+        padding: '24px',
+        background: colorBgContainer,
+        minHeight: 'calc(100vh - 64px)'
+      }}>
+        <div style={{ 
+          maxWidth: '1400px', 
+          margin: '0 auto',
+          width: '100%'
+        }}>
+          <Routes>
+            <Route path="/" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+            <Route 
+              path="/dashboard" 
+              element={isAuthenticated ? <Dashboard /> : <Navigate to="/" replace />} 
+            />
+            <Route 
+              path="/store" 
+              element={isAuthenticated ? <Store /> : <Navigate to="/" replace />} 
+            />
+            <Route 
+              path="/playlist" 
+              element={isAuthenticated ? <PlaylistPage /> : <Navigate to="/" replace />} 
+            />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </div>
+      </Content>
+    </Layout>
+  );
 }
 
 function App() {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    return (
-        <Router>
-            <AppContent isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} />
-        </Router>
-    );
+  return (
+    <Router>
+      <AppContent isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} />
+    </Router>
+  );
 }
 
 export default App;
