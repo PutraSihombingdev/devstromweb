@@ -243,14 +243,7 @@ function PlaylistPage() {
                 <Title level={3} style={{ margin: 0 }}>My Playlists</Title>
                 <Text type="secondary">Manage your favorite playlists</Text>
               </div>
-              <Button 
-                type="primary" 
-                icon={<PlusOutlined />} 
-                onClick={onHandleDrawer}
-                style={{ borderRadius: '6px' }}
-              >
-                Add Playlist
-              </Button>
+
             </div>
 
             <Space style={{ marginBottom: 24, width: '100%' }}>
@@ -311,9 +304,6 @@ function PlaylistPage() {
                 <Text type="secondary">
                   {searchInput ? 'Try a different search term' : 'Create your first playlist'}
                 </Text>
-                <div style={{ marginTop: '16px' }}>
-                  <Button type="primary" onClick={onHandleDrawer}>Add Playlist</Button>
-                </div>
               </div>
             ) : (
               <List
