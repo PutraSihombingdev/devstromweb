@@ -2,11 +2,11 @@ import axios from 'axios';
 
 const API_URL = 'https://webfmsi.singapoly.com/api/playlist/47';
 
-// ✅ FUNGSI GET
+
 export const getPlaylist = async () => {
     try {
-        const response = await axios.get(API_URL); // ✅ Ini yang benar
-        return response.data; // ✅ Cukup return datanya
+        const response = await axios.get(API_URL); 
+                return response.data;
     } catch (error) {
         throw error;
     }

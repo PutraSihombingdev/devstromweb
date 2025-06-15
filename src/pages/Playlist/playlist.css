@@ -1,0 +1,72 @@
+/* Layout Styles */
+.layout-content {
+  padding: 24px;
+}
+
+/* Card Styles */
+.playlist-card {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #f0f0f0;
+}
+
+.playlist-card.selected {
+  border: 2px solid #1890ff;
+}
+
+.playlist-card-cover {
+  height: 180px;
+  width: 100%;
+  object-fit: cover;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+/* Header Styles */
+.playlist-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+/* Search & Action Bar Styles */
+.action-bar {
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.search-input {
+  width: 300px;
+  border-radius: 6px;
+}
+
+/* Empty State Styles */
+.empty-state {
+  text-align: center;
+  padding: 40px;
+}
+
+/* Modal Styles */
+.modal-thumbnail {
+  width: 200px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 24px;
+}
+
+.modal-description {
+  background: #f9f9f9;
+  padding: 16px;
+  border-radius: 6px;
+  white-space: pre-wrap;
+}
+
+/* Checkbox Position */
+.select-checkbox {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 1;
+}
